@@ -1,0 +1,17 @@
+/snap/clion/305/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/snap/clion/305/bin/ninja/linux/x64/ninja -G Ninja -S /home/thaiku/Documents/projects/Jit -B /home/thaiku/Documents/projects/Jit/cmake-build-debug
+-- Configuring done (0.0s)
+CMake Error at CMakeLists.txt:27 (target_link_libraries):
+  Target "Jit" links to:
+
+    OpenSSL::SSL
+
+  but the target was not found.  Possible reasons include:
+
+    * There is a typo in the target name.
+    * A find_package call is missing for an IMPORTED target.
+    * An ALIAS target is missing.
+
+
+
+-- Generating done (0.0s)
+CMake Generate step failed.  Build files cannot be regenerated correctly.
