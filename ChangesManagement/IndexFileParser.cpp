@@ -102,7 +102,7 @@ namespace manager {
         std::ifstream file(index_file_path);
 
         if (!file) {
-            throw std::runtime_error("Could not open file for reading");
+            throw std::runtime_error("Could not open file: "+index_file_path);
         }
 
         IndexFileContent content;

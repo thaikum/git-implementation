@@ -18,7 +18,7 @@
 namespace fs = std::filesystem;
 
 void compress_and_copy(const std::string &source, const std::string &destination);
-std::string generateSHA1(const std::string &file_path);
+[[nodiscard]] std::string generateSHA1(const std::string &file_path);
 void save_as_binary(const std::string& destination, const std::string& checksum, const std::string& file_name);
 std::string time_point_to_string(const std::chrono::system_clock::time_point& tp);
 std::chrono::system_clock::time_point string_to_time_point(const std::string& time_str);

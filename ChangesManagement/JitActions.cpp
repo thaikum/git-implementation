@@ -13,6 +13,31 @@ namespace manager {
     JitActions::JitActions(std::string jit_root) : jit_root(std::move(jit_root)), ChangesManager(
             std::regex_replace(jit_root, std::regex(".jit"), "")) {}
 
+    std::string JitActions::get_head() {
+        std::ifstream head_file(jit_root + "/HEAD");
+        if (head_file) {
+            std::string head;
+            getline(head_file, head);
+            head_file.close();
+            return head;
+        } else {
+            throw std::runtime_error("Could not open the HEAD file");
+        }
+    }
+
+    std::string JitActions::get_branch_head(const std::string &branch_name) {
+        std::ifstream head_file(jit_root+"/refs/heads/"+ branch_name);
+
+        if (head_file) {
+            std::string head;
+            getline(head_file, head);
+            head_file.close();
+            return head;
+        } else {
+            throw std::runtime_error("Could not open the HEAD file");
+        }
+    }
+
     void JitActions::commit(const std::string &message) {
         IndexFileParser indexFileParser(jit_root + "/index");
         IndexFileContent indexFileContent = indexFileParser.read_index_file();
@@ -27,33 +52,26 @@ namespace manager {
 
         std::string index_checksum = generateSHA1(jit_root + "/index");
 
-        std::ifstream head_file(jit_root + "/HEAD");
-        if (head_file) {
-            std::string head;
-            getline(head_file, head);
-            head_file.close();
+        std::string head = get_head();
 
-            std::fstream reference_file(jit_root + "/" + head, std::ios::in | std::ios::out);
-            if (!reference_file) {
-                throw std::runtime_error("Could not open the reference file");
-            }
+        std::fstream reference_file(jit_root + "/" + head, std::ios::in | std::ios::out);
+        if (!reference_file) {
+            throw std::runtime_error("Could not open the reference file");
+        }
 
-            std::string old_checksum;
-            getline(reference_file, old_checksum);
+        std::string old_checksum;
+        getline(reference_file, old_checksum);
 
-            if (reference_file) {
-                reference_file.clear();
-                reference_file.seekp(0, std::ios::beg);
-                reference_file << index_checksum;
-                reference_file.close();
+        if (reference_file) {
+            reference_file.clear();
+            reference_file.seekp(0, std::ios::beg);
+            reference_file << index_checksum;
+            reference_file.close();
 
-                save_as_binary(jit_root + "/objects", index_checksum, jit_root + "/index");
-                jit_log(jit_root + "/logs/" + head, old_checksum, index_checksum, "commit: " + message);
-            } else {
-                throw std::runtime_error("Failed to read old checksum from the reference file");
-            }
+            save_as_binary(jit_root + "/objects", index_checksum, jit_root + "/index");
+            jit_log(jit_root + "/logs/" + head, old_checksum, index_checksum, "commit: " + message);
         } else {
-            throw std::runtime_error("Could not open the HEAD file");
+            throw std::runtime_error("Failed to read old checksum from the reference file");
         }
     }
 

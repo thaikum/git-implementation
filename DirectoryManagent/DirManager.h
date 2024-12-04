@@ -21,7 +21,7 @@ namespace manager {
 
         void initialize_jit();
 
-        [[nodiscard]] std::string get_jit_directory();
+        [[nodiscard]] std::string get_root_directory();
 
     private:
         std::string root_directory;

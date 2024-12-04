@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
             std::cerr << "Usage: git merge <branch-name>" << std::endl;
             return 1;
         }
-//        git_merge(argv[2]);
+        jitActions.merge(argv[2]);
     } else if (command == "branches") {
 //        git_branches();
     } else if (command == "init") {

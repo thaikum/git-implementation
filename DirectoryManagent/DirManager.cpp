@@ -26,8 +26,8 @@ namespace manager {
         return files;
     }
 
-    std::string DirManager::get_jit_directory() {
-        return jit_directory;
+    std::string DirManager::get_root_directory() {
+        return root_directory;
     }
 
     void DirManager::initialize_jit() {

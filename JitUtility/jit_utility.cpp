@@ -135,7 +135,7 @@ void jit_log(const std::string &log_file_path, const std::string &old_checksum,
     }
 }
 
-void print_commit_log(const std::string& file_path) {
+void print_commit_log(const std::string &file_path) {
     std::ifstream file(file_path);
     if (!file.is_open()) {
         std::cerr << "Could not open the file!" << std::endl;
@@ -143,7 +143,8 @@ void print_commit_log(const std::string& file_path) {
     }
 
     std::string line;
-    std::regex commit_regex(R"((^[0-9a-f]{40})\s([0-9a-f]{40})\s(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+commit:\s(.+))");
+    std::regex commit_regex(
+            R"((^[0-9a-f]{40})\s([0-9a-f]{40})\s(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+(?:commit|merge):\s(.+))");
     std::smatch match;
 
     while (std::getline(file, line)) {
@@ -170,7 +171,7 @@ void decompress_and_copy(const std::string &source, const std::string &destinati
         // Open the compressed source file
         std::ifstream input(source, std::ios::binary);
         if (!input) {
-            throw std::runtime_error("Cannot open source file for reading");
+            throw std::runtime_error("Cannot open source " + source + " for reading");
         }
 
         // Read the compressed data into a buffer
@@ -201,16 +202,17 @@ void decompress_and_copy(const std::string &source, const std::string &destinati
 
         // Optionally, set restrictive permissions
         fs::permissions(destination,
-                        fs::perms::owner_read | fs::perms::group_read | fs::perms::others_read | fs::perms::owner_write | fs::perms::group_write,
+                        fs::perms::owner_read | fs::perms::group_read | fs::perms::others_read |
+                        fs::perms::owner_write | fs::perms::group_write,
                         fs::perm_options::replace);
     } catch (const std::exception &e) {
         throw std::runtime_error(e.what());
     }
 }
 
-fs::path generate_file_path(const std::string& checksum){
+fs::path generate_file_path(const std::string &checksum) {
     std::string checksum_prefix = checksum.substr(0, 2);
     std::string checksum_suffix = checksum.substr(2);
 
-    return fs::path(checksum_prefix)/fs::path(checksum_suffix);
+    return fs::path(checksum_prefix) / fs::path(checksum_suffix);
 }
