@@ -6,7 +6,6 @@
 #include <iostream>
 #include <regex>
 #include "JitActions.h"
-#include "../JitUtility/jit_utility.h"
 #include "IndexFileParser.h"
 
 namespace manager {

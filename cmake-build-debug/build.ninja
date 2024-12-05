@@ -91,6 +91,12 @@ build CMakeFiles/Jit.dir/ChangesManagement/JitActionsBranchMerge.cpp.o: CXX_COMP
   OBJECT_DIR = CMakeFiles/Jit.dir
   OBJECT_FILE_DIR = CMakeFiles/Jit.dir/ChangesManagement
 
+build CMakeFiles/Jit.dir/ChangesManagement/DiffGeneration.cpp.o: CXX_COMPILER__Jit_unscanned_Debug /home/thaiku/Documents/projects/Jit/ChangesManagement/DiffGeneration.cpp || cmake_object_order_depends_target_Jit
+  DEP_FILE = CMakeFiles/Jit.dir/ChangesManagement/DiffGeneration.cpp.o.d
+  FLAGS = -g -std=gnu++2a -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/Jit.dir
+  OBJECT_FILE_DIR = CMakeFiles/Jit.dir/ChangesManagement
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Jit
@@ -99,7 +105,7 @@ build CMakeFiles/Jit.dir/ChangesManagement/JitActionsBranchMerge.cpp.o: CXX_COMP
 #############################################
 # Link the executable Jit
 
-build Jit: CXX_EXECUTABLE_LINKER__Jit_Debug CMakeFiles/Jit.dir/main.cpp.o CMakeFiles/Jit.dir/DirectoryManagent/DirManager.cpp.o CMakeFiles/Jit.dir/ChangesManagement/ChangesManager.cpp.o CMakeFiles/Jit.dir/ChangesManagement/IndexFileParser.cpp.o CMakeFiles/Jit.dir/ChangesManagement/JitActions.cpp.o CMakeFiles/Jit.dir/JitUtility/jit_utility.cpp.o CMakeFiles/Jit.dir/ChangesManagement/JitActionsBranchMerge.cpp.o | /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so /usr/lib/x86_64-linux-gnu/libz.so
+build Jit: CXX_EXECUTABLE_LINKER__Jit_Debug CMakeFiles/Jit.dir/main.cpp.o CMakeFiles/Jit.dir/DirectoryManagent/DirManager.cpp.o CMakeFiles/Jit.dir/ChangesManagement/ChangesManager.cpp.o CMakeFiles/Jit.dir/ChangesManagement/IndexFileParser.cpp.o CMakeFiles/Jit.dir/ChangesManagement/JitActions.cpp.o CMakeFiles/Jit.dir/JitUtility/jit_utility.cpp.o CMakeFiles/Jit.dir/ChangesManagement/JitActionsBranchMerge.cpp.o CMakeFiles/Jit.dir/ChangesManagement/DiffGeneration.cpp.o | /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so /usr/lib/x86_64-linux-gnu/libz.so
   FLAGS = -g
   LINK_LIBRARIES = /usr/lib/x86_64-linux-gnu/libssl.so  /usr/lib/x86_64-linux-gnu/libcrypto.so  /usr/lib/x86_64-linux-gnu/libz.so  -lpthread
   OBJECT_DIR = CMakeFiles/Jit.dir

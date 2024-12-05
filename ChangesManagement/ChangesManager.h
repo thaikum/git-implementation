@@ -22,7 +22,7 @@ namespace manager {
 
         static std::vector<std::string> split_string(const std::string &s, const std::string &delimiter);
 
-        std::map<std::string, std::set<FileInfo>> repo_status();
+        [[nodiscard]] JitStatus repo_status();
 
         void print_jit_status();
 

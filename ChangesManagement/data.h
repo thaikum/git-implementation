@@ -8,6 +8,7 @@
 #include <chrono>
 #include <vector>
 #include <map>
+#include <set>
 
 struct FileInfo {
     std::string filename;
@@ -33,5 +34,12 @@ struct IndexFileContent {
     IndexMetaData metaData;
     std::vector<FileInfo> files;
     std::map<std::string, FileInfo> files_map;
+};
+
+struct JitStatus{
+    std::set<FileInfo> new_files;
+    std::set<FileInfo> modified_files;
+    std::set<FileInfo> deleted_files;
+    std::set<FileInfo> staged_files;
 };
 #endif

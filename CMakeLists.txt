@@ -20,6 +20,7 @@ add_executable(Jit main.cpp
         JitUtility/jit_utility.h
         JitUtility/jit_utility.cpp
         ChangesManagement/JitActionsBranchMerge.cpp
+        ChangesManagement/DiffGeneration.cpp
 )
 
 target_link_libraries(Jit OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB pthread)

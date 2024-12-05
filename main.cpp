@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
 
     std::string command = argv[1];
 
-    // Handle different git commands using a switch-like structure with a map
     if (command == "add") {
         if (argc != 3) {
             std::cerr << "Usage: git add <filename>" << std::endl;
@@ -66,6 +65,8 @@ int main(int argc, char *argv[]) {
 //        git_branches();
     } else if (command == "init") {
         jitActions.initialize_jit();
+    } else if (command == "diff") {
+        jitActions.jit_diff();
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;

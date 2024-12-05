@@ -6,6 +6,7 @@
 #define JIT_JIT_UTILITY_H
 
 #include <string>
+#include <vector>
 #include <filesystem>
 
 #define RESET "\033[0m"
@@ -27,5 +28,7 @@ void jit_log(const std::string &log_file_path, const std::string &old_checksum,
 void print_commit_log(const std::string& file_path);
 void decompress_and_copy(const std::string &source, const std::string &destination);
 fs::path generate_file_path(const std::string& checksum);
+std::vector<std::string> diff_files(const std::vector<std::string>& file1, const std::vector<std::string>& file2);
+std::vector<std::string> read_binary_as_text(const std::string& file_path);
 
 #endif //JIT_JIT_UTILITY_H

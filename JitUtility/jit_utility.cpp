@@ -216,3 +216,97 @@ fs::path generate_file_path(const std::string &checksum) {
 
     return fs::path(checksum_prefix) / fs::path(checksum_suffix);
 }
+
+std::vector<std::vector<int>> compute_lcs_table(const std::vector<std::string>& file1, const std::vector<std::string>& file2) {
+    size_t n = file1.size(), m = file2.size();
+    std::vector<std::vector<int>> lcs_table(n + 1, std::vector<int>(m + 1, 0));
+
+    for (size_t i = 1; i <= n; ++i) {
+        for (size_t j = 1; j <= m; ++j) {
+            if (file1[i - 1] == file2[j - 1]) {
+                lcs_table[i][j] = lcs_table[i - 1][j - 1] + 1;
+            } else {
+                lcs_table[i][j] = std::max(lcs_table[i - 1][j], lcs_table[i][j - 1]);
+            }
+        }
+    }
+    return lcs_table;
+}
+
+auto generate_diff(const std::vector<std::string>& file1, const std::vector<std::string>& file2,
+                   const std::vector<std::vector<int>>& lcs_table) {
+    size_t i = file1.size(), j = file2.size();
+    std::vector<std::string> diff;
+
+    while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 && file1[i - 1] == file2[j - 1]) {
+            diff.push_back("  " + file1[i - 1]);
+            --i;
+            --j;
+        } else if (j > 0 && (i == 0 || lcs_table[i][j - 1] >= lcs_table[i - 1][j])) {
+            diff.push_back("+ " + file2[j - 1]);
+            --j;
+        } else if (j == 0 || lcs_table[i][j - 1] < lcs_table[i - 1][j]) {
+            diff.push_back("- " + file1[i - 1]);
+            --i;
+        }
+    }
+
+    std::reverse(diff.begin(), diff.end());
+
+    return diff;
+}
+
+std::vector<std::string> read_binary_as_text(const std::string &source) {
+    try {
+        // Open the compressed source file
+        std::ifstream input(source, std::ios::binary);
+        if (!input) {
+            throw std::runtime_error("Cannot open source " + source + " for reading");
+        }
+
+        // Read the compressed data into a buffer
+        std::vector<char> compressed_data((std::istreambuf_iterator<char>(input)),
+                                          std::istreambuf_iterator<char>());
+        input.close();
+
+        // Prepare the decompression buffer
+        uLongf decompressed_size = compressed_data.size() * 4; // Initial size estimate
+        std::vector<Bytef> decompressed_data(decompressed_size);
+
+        // Decompress the data
+        int result = uncompress(decompressed_data.data(), &decompressed_size,
+                                reinterpret_cast<const Bytef *>(compressed_data.data()), compressed_data.size());
+
+        if (result == Z_BUF_ERROR) {
+            throw std::runtime_error("Buffer size is too small for decompression");
+        } else if (result != Z_OK) {
+            throw std::runtime_error("Error decompressing file data");
+        }
+
+        // Resize decompressed data to actual size
+        decompressed_data.resize(decompressed_size);
+
+        // Convert decompressed data to string
+        std::string decompressed_text(decompressed_data.begin(), decompressed_data.end());
+
+        // Split the decompressed text into lines
+        std::vector<std::string> lines;
+        std::istringstream text_stream(decompressed_text);
+        std::string line;
+        while (std::getline(text_stream, line)) {
+            lines.push_back(line);
+        }
+
+        return lines;
+    } catch (const std::exception &e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return {};
+    }
+}
+
+std::vector<std::string> diff_files(const std::vector<std::string>& file1, const std::vector<std::string>& file2) {
+    std::vector<std::vector<int>> lcs_table = compute_lcs_table(file1, file2);
+
+    return generate_diff(file1, file2, lcs_table);
+}

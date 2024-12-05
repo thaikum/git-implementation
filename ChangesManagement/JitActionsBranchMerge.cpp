@@ -38,14 +38,6 @@ namespace manager {
 
     }
 
-//    std::set<std::string> changed_files(std::map<std::string , FileInfo> content1, std::map<std::string , FileInfo> content2){
-//        std::set<std::string> changed_files;
-//
-//        for(auto &content1_pair: content1){
-//            if(content2.contains())
-//        }
-//    }
-
     void JitActions::merge(const std::string &feature_branch) {
         std::string head = get_head();
 
@@ -151,15 +143,15 @@ namespace manager {
                             }
                         }
                     } else if (f_branch.contains(main_pair.first)) {
-                        std::cout<<"Present in both but not in master"<<std::endl;
+                        std::cout << "Present in both but not in master" << std::endl;
                         //file present in both branches but absent in base
                         std::string temp_branch_file = create_temp_file(f_branch.at(main_pair.first).checksum);
                         const auto branch_file_vector = read_file_to_vector(temp_branch_file);
                         const auto main_file_vector = read_file_to_vector(absolute_path);
                         const std::vector<std::string> base;
 
-                        std::cout<<"First "<<branch_file_vector.at(0)<<std::endl;
-                        std::cout<<"Main "<<branch_file_vector.at(0)<<std::endl;
+                        std::cout << "First " << branch_file_vector.at(0) << std::endl;
+                        std::cout << "Main " << branch_file_vector.at(0) << std::endl;
 
                         const auto merged_vector = three_way_merge(base, branch_file_vector, main_file_vector);
                         write_vector_to_file(absolute_path, merged_vector);
@@ -195,6 +187,12 @@ namespace manager {
 
     std::string JitActions::create_temp_file(const std::string &checksum) {
         std::string new_file_name = jit_root + "/temp/" + checksum;
+        decompress_and_copy((jit_root + "/objects/" + generate_file_path(checksum).string()), new_file_name);
+        return new_file_name;
+    }
+
+    std::string JitActions::create_temp_file(const std::string &checksum, const std::string& file_name) {
+        std::string new_file_name = jit_root + "/temp/" + file_name;
         decompress_and_copy((jit_root + "/objects/" + generate_file_path(checksum).string()), new_file_name);
         return new_file_name;
     }
@@ -237,7 +235,7 @@ namespace manager {
             std::string branch_2_line = (k < branch_2.size()) ? branch_2[k] : "";
 
             if (branch_1_line == branch_2_line) {
-                std::cout<<"Attempting merging"<<std::endl;
+                std::cout << "Attempting merging" << std::endl;
 
                 merged.push_back(branch_1_line);
                 if (i < base.size() && branch_1_line == base_line) i++;
@@ -256,7 +254,7 @@ namespace manager {
                 if (j < branch_1.size()) j++;
                 k++;
             } else {
-                std::cout<<"Here is conflict"<<std::endl;
+                std::cout << "Here is conflict" << std::endl;
                 merged.emplace_back("<<<<<<< BRANCH 1");
                 merged.push_back(branch_1_line);
                 merged.emplace_back("=======");

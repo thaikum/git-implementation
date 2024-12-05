@@ -57,9 +57,10 @@ namespace manager {
         return files;
     }
 
-    std::map<std::string, std::set<FileInfo>> ChangesManager::repo_status() {
+    JitStatus ChangesManager::repo_status() {
         transform_file_names();
         auto file_map = get_files_map(files);
+        JitStatus status;
         IndexFileParser parser(file_map, jit_root + "/index");
         IndexFileContent previous_content = parser.read_index_file();
         std::set<FileInfo> new_files;
@@ -88,24 +89,24 @@ namespace manager {
         }
 
         std::map<std::string, std::set<FileInfo>> result;
-        result.insert(std::pair("new_files", new_files));
-        result.insert(std::pair("modified_files", modified_files));
-        result.insert(std::pair("staged_files", staged_files));
+        status.new_files = new_files;
+        status.modified_files = modified_files;
+        status.staged_files = staged_files;
 
         for (auto const &file_info_pair: previous_content.files_map) {
             deleted_files.insert(file_info_pair.second);
         }
 
-        result.insert(std::pair("deleted_files", deleted_files));
-        return result;
+        status.deleted_files = deleted_files;
+        return status;
     }
 
     void ChangesManager::print_jit_status() {
         auto status = repo_status();
-        auto new_files = status.at("new_files");
-        auto modified_files = status.at("modified_files");
-        auto deleted_files = status.at("deleted_files");
-        auto staged_files = status.at("staged_files");
+        auto new_files = status.new_files;
+        auto modified_files = status.modified_files;
+        auto deleted_files = status.deleted_files;
+        auto staged_files = status.staged_files;
 
         std::ifstream head_file(jit_root + "/HEAD");
 
