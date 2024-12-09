@@ -7,8 +7,10 @@
 #include <string>
 #include <chrono>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <set>
+#define COMMIT_FILE_HASH "4015b57a143aec5156fd1444a017a32137a3fd0f"
+
 
 struct FileInfo {
     std::string filename;
@@ -32,8 +34,7 @@ struct IndexMetaData {
 
 struct IndexFileContent {
     IndexMetaData metaData;
-    std::vector<FileInfo> files;
-    std::map<std::string, FileInfo> files_map;
+    std::unordered_map<std::string, FileInfo> files_map;
 };
 
 struct JitStatus{

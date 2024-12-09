@@ -13,6 +13,12 @@
 #include <iomanip>
 #include <regex>
 
+/**
+ * Converts a time_point to a string formatted as "YYYY-MM-DD HH:MM:SS".
+ *
+ * @param tp The time_point to be converted.
+ * @return A string representation of the time_point.
+ */
 std::string time_point_to_string(const std::chrono::system_clock::time_point &tp) {
     auto time_t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm = *std::localtime(&time_t);
@@ -21,6 +27,12 @@ std::string time_point_to_string(const std::chrono::system_clock::time_point &tp
     return oss.str();
 }
 
+/**
+ * Converts a string in "YYYY-MM-DD HH:MM:SS" format to a time_point.
+ *
+ * @param time_str The time string to be converted.
+ * @return A time_point representation of the string.
+ */
 std::chrono::system_clock::time_point string_to_time_point(const std::string &time_str) {
     std::tm tm = {};
     std::istringstream iss(time_str);
@@ -28,6 +40,13 @@ std::chrono::system_clock::time_point string_to_time_point(const std::string &ti
     return std::chrono::system_clock::from_time_t(std::mktime(&tm));
 }
 
+/**
+ * Compresses the source file and writes the compressed data to the destination file.
+ *
+ * @param source The path to the source file.
+ * @param destination The path to the destination file where the compressed data will be written.
+ * @throws std::runtime_error If an error occurs during compression or file operations.
+ */
 void compress_and_copy(const std::string &source, const std::string &destination) {
     try {
         std::ifstream input(source, std::ios::binary);
@@ -54,7 +73,7 @@ void compress_and_copy(const std::string &source, const std::string &destination
             throw std::runtime_error("Cannot open destination file for writing");
         }
 
-        output.write(reinterpret_cast<const char *>(compressed_data.data()), compressed_size);
+        output.write(reinterpret_cast<const char *>(compressed_data.data()), static_cast<long>(compressed_size));
         output.close();
 
         // Optionally, set restrictive permissions
@@ -66,6 +85,12 @@ void compress_and_copy(const std::string &source, const std::string &destination
     }
 }
 
+/**
+ * Generates the SHA1 checksum of a file.
+ *
+ * @param file_path The path to the file whose checksum is to be generated.
+ * @return The SHA1 checksum of the file in hexadecimal string format.
+ */
 std::string generateSHA1(const std::string &file_path) {
     std::ifstream file(file_path, std::ios::binary);
     if (!file) {
@@ -95,6 +120,13 @@ std::string generateSHA1(const std::string &file_path) {
     return oss.str();
 }
 
+/**
+ * Saves a file in a binary format in a directory structure based on its checksum.
+ *
+ * @param destination The root directory where the file will be saved.
+ * @param checksum The SHA1 checksum used for the directory structure.
+ * @param file_name The path to the source file.
+ */
 void save_as_binary(const std::string &destination, const std::string &checksum, const std::string &file_name) {
     std::string checksum_prefix = checksum.substr(0, 2);
     std::string checksum_suffix = checksum.substr(2);
@@ -121,6 +153,15 @@ void save_as_binary(const std::string &destination, const std::string &checksum,
     compress_and_copy(file_name, file_path);
 }
 
+/**
+ * Logs the details of a checksum change event to a log file.
+ *
+ * @param log_file_path The path to the log file.
+ * @param old_checksum The old checksum value.
+ * @param cur_checksum The new checksum value.
+ * @param message A message describing the event.
+ * @throws std::runtime_error If there is an issue opening or writing to the log file.
+ */
 void jit_log(const std::string &log_file_path, const std::string &old_checksum,
              const std::string &cur_checksum, const std::string &message) {
     std::ofstream log_file(log_file_path, std::ios::app);
@@ -135,6 +176,11 @@ void jit_log(const std::string &log_file_path, const std::string &old_checksum,
     }
 }
 
+/**
+ * Prints the commit log from a file to the console with colored output.
+ *
+ * @param file_path The path to the log file.
+ */
 void print_commit_log(const std::string &file_path) {
     std::ifstream file(file_path);
     if (!file.is_open()) {
@@ -166,24 +212,27 @@ void print_commit_log(const std::string &file_path) {
     file.close();
 }
 
+/**
+ * Decompresses the source file and writes the decompressed data to the destination file.
+ *
+ * @param source The path to the compressed source file.
+ * @param destination The path to the destination file where the decompressed data will be written.
+ * @throws std::runtime_error If an error occurs during decompression or file operations.
+ */
 void decompress_and_copy(const std::string &source, const std::string &destination) {
     try {
-        // Open the compressed source file
         std::ifstream input(source, std::ios::binary);
         if (!input) {
             throw std::runtime_error("Cannot open source " + source + " for reading");
         }
 
-        // Read the compressed data into a buffer
         std::vector<char> compressed_data((std::istreambuf_iterator<char>(input)),
                                           std::istreambuf_iterator<char>());
         input.close();
 
-        // Prepare the decompression buffer
         uLongf decompressed_size = compressed_data.size() * 4; // Size estimate (it may need adjustment)
         std::vector<Bytef> decompressed_data(decompressed_size);
 
-        // Decompress the data
         int result = uncompress(decompressed_data.data(), &decompressed_size,
                                 reinterpret_cast<const Bytef *>(compressed_data.data()), compressed_data.size());
 
@@ -191,16 +240,22 @@ void decompress_and_copy(const std::string &source, const std::string &destinati
             throw std::runtime_error("Error decompressing file data");
         }
 
-        // Write the decompressed data to the destination file
+        fs::path destination_dir = fs::path(destination).parent_path();
+
+        // Create any missing directories in the destination path
+        if (!fs::exists(destination_dir)) {
+            fs::create_directories(destination_dir);
+        }
+
+
         std::ofstream output(destination, std::ios::binary);
         if (!output) {
             throw std::runtime_error("Cannot open destination file for writing");
         }
 
-        output.write(reinterpret_cast<const char *>(decompressed_data.data()), decompressed_size);
+        output.write(reinterpret_cast<const char *>(decompressed_data.data()), static_cast<long>(decompressed_size));
         output.close();
 
-        // Optionally, set restrictive permissions
         fs::permissions(destination,
                         fs::perms::owner_read | fs::perms::group_read | fs::perms::others_read |
                         fs::perms::owner_write | fs::perms::group_write,
@@ -210,6 +265,12 @@ void decompress_and_copy(const std::string &source, const std::string &destinati
     }
 }
 
+/**
+ * Generates the file path for a file based on its checksum.
+ *
+ * @param checksum The SHA1 checksum of the file.
+ * @return The file path based on the checksum.
+ */
 fs::path generate_file_path(const std::string &checksum) {
     std::string checksum_prefix = checksum.substr(0, 2);
     std::string checksum_suffix = checksum.substr(2);
@@ -217,7 +278,15 @@ fs::path generate_file_path(const std::string &checksum) {
     return fs::path(checksum_prefix) / fs::path(checksum_suffix);
 }
 
-std::vector<std::vector<int>> compute_lcs_table(const std::vector<std::string>& file1, const std::vector<std::string>& file2) {
+/**
+ * Computes the Longest Common Subsequence (LCS) table between two files represented as vectors of strings.
+ *
+ * @param file1 The first file represented as a vector of strings.
+ * @param file2 The second file represented as a vector of strings.
+ * @return A 2D vector representing the LCS table.
+ */
+std::vector<std::vector<int>>
+compute_lcs_table(const std::vector<std::string> &file1, const std::vector<std::string> &file2) {
     size_t n = file1.size(), m = file2.size();
     std::vector<std::vector<int>> lcs_table(n + 1, std::vector<int>(m + 1, 0));
 
@@ -233,8 +302,16 @@ std::vector<std::vector<int>> compute_lcs_table(const std::vector<std::string>& 
     return lcs_table;
 }
 
-auto generate_diff(const std::vector<std::string>& file1, const std::vector<std::string>& file2,
-                   const std::vector<std::vector<int>>& lcs_table) {
+/**
+ * Generates a diff between two files represented as vectors of strings based on the LCS table.
+ *
+ * @param file1 The first file represented as a vector of strings.
+ * @param file2 The second file represented as a vector of strings.
+ * @param lcs_table The LCS table computed between the two files.
+ * @return A vector of strings representing the diff between the files.
+ */
+std::vector<std::string> generate_diff(const std::vector<std::string> &file1, const std::vector<std::string> &file2,
+                                       const std::vector<std::vector<int>> &lcs_table) {
     size_t i = file1.size(), j = file2.size();
     std::vector<std::string> diff;
 
@@ -257,6 +334,12 @@ auto generate_diff(const std::vector<std::string>& file1, const std::vector<std:
     return diff;
 }
 
+/**
+ * Reads a binary file, decompresses its content, and returns the content as a vector of strings (lines).
+ *
+ * @param source The path to the compressed binary source file.
+ * @return A vector of strings representing the decompressed content, line by line.
+ */
 std::vector<std::string> read_binary_as_text(const std::string &source) {
     try {
         // Open the compressed source file
@@ -305,8 +388,17 @@ std::vector<std::string> read_binary_as_text(const std::string &source) {
     }
 }
 
-std::vector<std::string> diff_files(const std::vector<std::string>& file1, const std::vector<std::string>& file2) {
+/**
+ * Computes and generates a diff between two files represented as vectors of strings.
+ *
+ * @param file1 The first file represented as a vector of strings.
+ * @param file2 The second file represented as a vector of strings.
+ * @return A vector of strings representing the diff between the files.
+ */
+std::vector<std::string> compute_diff(const std::vector<std::string> &file1, const std::vector<std::string> &file2) {
+    // Calculate LCS table
     std::vector<std::vector<int>> lcs_table = compute_lcs_table(file1, file2);
 
+    // Generate and return the diff
     return generate_diff(file1, file2, lcs_table);
 }
