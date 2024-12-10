@@ -178,6 +178,8 @@ namespace manager {
         jit_log(get_jit_root() + "/logs/" + new_branch_head, head, head, "branch: " + branch_name);
     }
 
+//    void JitActions::update_branch_and_head_after_branch_creation()
+
     /**
      * Checks out to a specific commit or branch.
      *
@@ -203,7 +205,6 @@ namespace manager {
         }
 
         throw_error_if_repo_is_dirty();
-        std::cout<<"Path is: "<<path.string()<<std::endl;
 
         // Perform checkout if target exists.
         if (fs::exists(path)) {

@@ -20,7 +20,6 @@ namespace manager {
     }
 
     void CommitGraph::add_commit(Commit commit, const std::vector<std::string> &parents) {
-        std::cout << "A commit was added " << std::endl;
         std::vector<std::string> pointers_to_parents;
         pointers_to_parents.reserve(parents.size());
 
@@ -131,7 +130,6 @@ namespace manager {
 
     void CommitGraph::save_commits(const std::string &file_path) {
         fs::path destination_dir = fs::path(file_path).parent_path();
-        std::cout << "The size id: " << commits.size() << std::endl;
 
         // Create any missing directories in the destination path
         if (!fs::exists(destination_dir)) {

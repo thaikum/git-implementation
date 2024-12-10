@@ -54,9 +54,9 @@ namespace manager {
         for (const auto &[file_name, file_info] : map1) {
             if (!(map2.contains(file_name) && map2[file_name].checksum == file_info.checksum)) {
                 // Retrieve file content for both versions
-                auto v1 = read_binary_as_text(get_root_directory() + "/objects/" + generate_file_path(file_info.checksum).string());
+                auto v1 = read_binary_as_text(get_jit_root() + "/objects/" + generate_file_path(file_info.checksum).string());
                 auto v2 = map2.contains(file_name)
-                          ? read_binary_as_text(get_root_directory() + "/objects/" + generate_file_path(map2[file_name].checksum).string())
+                          ? read_binary_as_text(get_jit_root() + "/objects/" + generate_file_path(map2[file_name].checksum).string())
                           : std::vector<std::string>{};
 
                 result[file_name] = {v1, v2};
@@ -66,7 +66,7 @@ namespace manager {
 
         // Remaining files in map2 are new additions
         for (const auto &[file_name, file_info] : map2) {
-            auto v2 = read_binary_as_text(get_root_directory() + "/objects/" + generate_file_path(file_info.checksum).string());
+            auto v2 = read_binary_as_text(get_jit_root() + "/objects/" + generate_file_path(file_info.checksum).string());
             result[file_name] = {{}, v2};
         }
 
@@ -127,7 +127,7 @@ namespace manager {
         const auto status = repo_status();
 
         if (status.modified_files.empty() && status.deleted_files.empty() && status.staged_files.empty()) {
-            return; // No differences to display
+            throw std::runtime_error("No diff to show");
         }
 
         // Launch asynchronous tasks to fetch original file content
@@ -183,7 +183,7 @@ namespace manager {
         std::map<std::string, std::vector<std::string>> files_content;
 
         for (const auto &[_, file_info] : content.files_map) {
-            std::string filename = get_root_directory() + "/objects/" + generate_file_path(file_info.checksum).string();
+            std::string filename = get_jit_root() + "/objects/" + generate_file_path(file_info.checksum).string();
             files_content[file_info.filename] = read_binary_as_text(filename);
         }
 

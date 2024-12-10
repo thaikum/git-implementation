@@ -8,7 +8,7 @@
 #include <string>
 #include <map>
 #include <set>
-#include "../DirectoryManagent/DirManager.h"
+#include "../DirectoryManagement/DirManager.h"
 #include "IndexFileParser.h"
 #include "data.h"
 

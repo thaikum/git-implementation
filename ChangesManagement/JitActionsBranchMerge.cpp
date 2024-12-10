@@ -380,7 +380,6 @@ namespace manager {
 
             // If both branches have the same line as the base, use that line.
             if (branch_1_line == branch_2_line) {
-                std::cout << "Attempting merging" << std::endl;
                 merged.push_back(branch_1_line);
                 if (i < base.size() && branch_1_line == base_line) i++;
                 if (j < branch_1.size()) j++;

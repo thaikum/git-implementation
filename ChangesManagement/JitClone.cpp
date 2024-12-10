@@ -103,6 +103,12 @@ namespace manager {
                               (target_dir + "/.jit/objects/" +
                                generate_file_path(commit).string()));
 //
+                    //copy the commit graph
+                    copy_file((get_jit_root() + "/objects/" +
+                               generate_file_path(COMMIT_FILE_HASH).string()),
+                              (target_dir + "/.jit/objects/" +
+                               generate_file_path(COMMIT_FILE_HASH).string()));
+
                     branch_commits.pop();
                     depth--;
                 }
@@ -129,12 +135,6 @@ namespace manager {
                 }
 
                 change_root_directory(target_dir);
-
-                if (latest_content == nullptr) {
-                    std::cout << "Out of bound";
-                } else {
-                    std::cout << "Entries are: " << latest_content->metaData.entries << std::endl;
-                }
 
                 checkout(*latest_content);
                 std::cout << "Clone successful" << std::endl;

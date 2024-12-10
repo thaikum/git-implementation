@@ -8,8 +8,8 @@ find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 add_executable(Jit main.cpp
-        DirectoryManagent/DirManager.cpp
-        DirectoryManagent/DirManager.h
+        DirectoryManagement/DirManager.cpp
+        DirectoryManagement/DirManager.h
         ChangesManagement/ChangesManager.cpp
         ChangesManagement/ChangesManager.h
         ChangesManagement/IndexFileParser.cpp

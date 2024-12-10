@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 #include "commit.h"
-#include "../DirectoryManagent/DirManager.h"
+#include "../DirectoryManagement/DirManager.h"
 
 
 namespace manager {

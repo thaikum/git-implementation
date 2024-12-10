@@ -1,7 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <unordered_map>
-#include "DirectoryManagent/DirManager.h"
+#include "DirectoryManagement/DirManager.h"
 #include "ChangesManagement/JitActions.h"
 
 namespace fs = std::filesystem;
@@ -51,8 +50,14 @@ void execute_command(const std::string &command, int argc, char *argv[], manager
         } else if (command == "clone") {
             if (argc == 3) {
                 jitActions.jit_clone(argv[2]);
+            } else if (argc == 4) {
+                jitActions.jit_clone(argv[2], argv[3]);
             } else if (argc == 5) {
                 jitActions.jit_branch_clone(argv[3], argv[4], -1);
+            } else if (argc == 6) {
+                jitActions.jit_branch_clone(argv[3], argv[4], argv[5], -1);
+            }else{
+                std::cerr << "Usage: jit clone <repository_directory>";
             }
         } else {
             std::cerr << "Unknown command: " << command << std::endl;
