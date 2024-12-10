@@ -1,8 +1,14 @@
 # JIT Repository Manager
 
-This project implements a simple JIT (Just-In-Time) repository management system inspired by Git. It allows you to
+This project implements a simple integrated repository management system inspired by Git. It allows you to
 initialize a repository, manage commits, branches, and diffs, and perform other Git-like operations through the command
 line.
+It uses an approach that closely resemble that used by git. This include, use of checksum to monitor file changes, keeping track of the whole file and storing it as a compressed binary file to minimize storage space.
+It also uses a directed graph to manage the commits which is a better approach since it helps keep track of commits even on detached heads.
+It is fully developed in C++. The language choice came as an inspiration of git's original language which is C.
+The speed offered by C++ is also beneficial when it comes to reading and writing files, performing diffs and commiting.
+Its multithreading capabilities also came in handy when calculating diffs and merging. Some files needed to be processed separately to reduce time taken.
+A brief explanation of how the program works is given at the end of this file.
 
 ## Features
 
